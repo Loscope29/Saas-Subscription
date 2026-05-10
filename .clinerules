@@ -1,0 +1,11 @@
+# AI Project Rules
+
+Avant de commencer toute tâche, vous devez lire les fichiers suivants :
+1. `GEMINI.md` — Contexte technique essentiel du projet.
+2. `DESIGN.md` — Design system complet à respecter pour toute modification UI.
+
+## Règles :
+- Toute modification d'interface DOIT utiliser les tokens définis dans `DESIGN.md` (couleurs brand, ombres, rayons de bordure).
+- Toute modification du flux d'authentification doit être synchronisée entre `backend/.env` et les routes React.
+- Utilisez toujours Tailwind CSS avec les classes `brand-*` définies dans `tailwind.config.js`.
+- Ne pas modifier les scopes Google OAuth sans vérifier la compatibilité dans `backend/apps/users/views.py`.

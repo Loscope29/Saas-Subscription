@@ -1,0 +1,8 @@
+# AI Instructions - Subscription Tracker MVP
+
+IMPORTANT: Avant toute intervention sur ce projet, vous DEVEZ impérativement lire les fichiers suivants à la racine :
+1. `GEMINI.md` — Structure technique, authentification OAuth, instructions de lancement.
+2. `DESIGN.md` — Design system complet (couleurs, typographie, espacements, composants).
+
+Toute modification d'interface DOIT respecter le design system défini dans `DESIGN.md` (palette Deep Indigo/Violet, police Inter, bordures 16px, ombres ambiantes).
+Respectez toujours l'architecture définie dans `GEMINI.md` pour garantir la cohérence entre le Frontend et le Backend.
