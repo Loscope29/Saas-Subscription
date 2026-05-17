@@ -14,7 +14,11 @@ const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401 && error.config.url !== '/auth/login/') {
+    if (
+      error.response?.status === 401 && 
+      error.config.url !== '/auth/login/' &&
+      error.config.url !== '/auth/profile/'
+    ) {
       // Pour l'instant, on redirige simplement vers le login
       // La logique de refresh token par cookie pourra être ajoutée côté backend
       window.location.href = '/login';

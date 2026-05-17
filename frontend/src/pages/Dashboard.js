@@ -4,6 +4,8 @@ import { subscriptionsAPI, authAPI } from '../services/api';
 import { Link } from 'react-router-dom';
 import SubscriptionModal from '../components/SubscriptionModal';
 import ScanHistory from '../components/ScanHistory';
+import ExpenseChart from '../components/ExpenseChart';
+import CategoryPieChart from '../components/CategoryPieChart';
 
 const Dashboard = () => {
   const { user, logout, refreshUser } = useAuth();
@@ -241,8 +243,8 @@ const Dashboard = () => {
           {/* Main Grid: Chart & Transactions */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-8">
-              {/* Chart Placeholder */}
-              <div className="bg-surface-container-lowest p-8 rounded-2xl border border-outline-variant/30 shadow-brand-low hover:shadow-brand-high transition-all">
+              {/* Chart Component */}
+              <div className="bg-surface-container-lowest p-8 rounded-2xl border border-outline-variant/30 shadow-brand-low hover:shadow-brand-high transition-all h-[400px] flex flex-col">
                 <div className="flex items-center justify-between mb-8">
                   <h4 className="text-xl font-bold text-primary">Aperçu des dépenses</h4>
                   <div className="flex items-center gap-2">
@@ -250,19 +252,8 @@ const Dashboard = () => {
                     <span className="text-xs text-on-surface-variant font-bold uppercase tracking-wider">Mensuel</span>
                   </div>
                 </div>
-                <div className="relative h-[250px] w-full flex items-end justify-between gap-3 sm:gap-6 px-2">
-                  <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-10">
-                    <div className="border-b border-outline w-full h-0"></div>
-                    <div className="border-b border-outline w-full h-0"></div>
-                    <div className="border-b border-outline w-full h-0"></div>
-                    <div className="border-b border-outline w-full h-0"></div>
-                  </div>
-                  {[40, 45, 60, 55, 70, 75, 80, 70, 85].map((h, i) => (
-                    <div key={i} className="flex-1 bg-secondary rounded-t-lg transition-all hover:bg-secondary-container" style={{ height: `${h}%` }}></div>
-                  ))}
-                </div>
-                <div className="flex justify-between mt-4 px-4 text-[10px] font-bold text-on-surface-variant uppercase">
-                  <span>Jan</span><span>Fév</span><span>Mar</span><span>Avr</span><span>Mai</span><span>Juin</span><span>Juil</span><span>Août</span><span>Sep</span>
+                <div className="flex-1 w-full relative">
+                  <ExpenseChart currentMonthlyCost={stats?.total_monthly_cost} />
                 </div>
               </div>
 
@@ -342,16 +333,11 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* Quick Actions / Categories */}
-              <div className="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant/30 shadow-brand-low">
-                <h4 className="font-bold text-primary mb-6 uppercase text-xs tracking-widest">Catégories</h4>
-                <div className="space-y-3">
-                  {['SaaS', 'Streaming', 'Design', 'Marketing'].map((cat) => (
-                    <div key={cat} className="flex items-center justify-between p-3 bg-surface border border-outline-variant/10 rounded-xl">
-                      <span className="text-sm font-bold text-on-surface">{cat}</span>
-                      <span className="text-xs font-black text-secondary">Active</span>
-                    </div>
-                  ))}
+              {/* Categories Chart */}
+              <div className="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant/30 shadow-brand-low flex flex-col h-[350px]">
+                <h4 className="font-bold text-primary mb-6 uppercase text-xs tracking-widest">Répartition</h4>
+                <div className="flex-1 w-full">
+                  <CategoryPieChart data={stats?.subscriptions_by_category} />
                 </div>
               </div>
             </div>
