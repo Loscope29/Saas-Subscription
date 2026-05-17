@@ -12,26 +12,18 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const checkAuth = async () => {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      try {
-        const response = await authAPI.getProfile();
-        setUser(response.data);
-      } catch (error) {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-      }
+    try {
+      const response = await authAPI.getProfile();
+      setUser(response.data);
+    } catch (error) {
+      setUser(null);
     }
     setLoading(false);
   };
 
   const login = async (email, password) => {
     try {
-      const response = await authAPI.login({ email, password });
-      const { access, refresh } = response.data;
-      
-      localStorage.setItem('access_token', access);
-      localStorage.setItem('refresh_token', refresh);
+      await authAPI.login({ email, password });
       
       // Fetch user profile immediately after login
       const profileResponse = await authAPI.getProfile();
@@ -49,10 +41,8 @@ export const AuthProvider = ({ children }) => {
   const register = async (data) => {
     try {
       const response = await authAPI.register(data);
-      const { access, refresh, user: userData } = response.data;
+      const { user: userData } = response.data;
       
-      localStorage.setItem('access_token', access);
-      localStorage.setItem('refresh_token', refresh);
       setUser(userData);
       
       return { success: true };
@@ -64,9 +54,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
+  const logout = async () => {
+    try {
+      await authAPI.logout();
+    } catch (err) {
+      console.error(err);
+    }
     setUser(null);
   };
 

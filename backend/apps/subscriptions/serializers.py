@@ -8,7 +8,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
         fields = '__all__'
-        read_only_fields = ('user', 'first_detected_date', 'created_at', 'updated_at')
+        read_only_fields = ('user', 'created_at', 'updated_at')
 
 
 class SubscriptionListSerializer(serializers.ModelSerializer):

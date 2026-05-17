@@ -1,8 +1,11 @@
-from rest_framework import status, generics
+from rest_framework import status, generics, views
 from rest_framework.decorators import api_view, permission_classes
+from django.utils.decorators import method_decorator
+from django_ratelimit.decorators import ratelimit
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from google_auth_oauthlib.flow import Flow
@@ -26,6 +29,7 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = (AllowAny,)
     serializer_class = RegisterSerializer
 
+    @method_decorator(ratelimit(key='ip', rate='5/m', method='POST', block=True))
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -33,12 +37,59 @@ class RegisterView(generics.CreateAPIView):
         
         # Generate JWT tokens
         refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
         
-        return Response({
+        response = Response({
             'user': UserSerializer(user).data,
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
+            'message': 'Utilisateur créé avec succès'
         }, status=status.HTTP_201_CREATED)
+        
+        # Set HttpOnly cookie
+        response.set_cookie(
+            key=settings.SIMPLE_JWT['AUTH_COOKIE'],
+            value=access_token,
+            expires=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'],
+            secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
+            httponly=settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
+            samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
+        )
+        
+        return response
+
+
+class LoginView(TokenObtainPairView):
+    """Override to set cookie"""
+    @method_decorator(ratelimit(key='ip', rate='5/m', method='POST', block=True))
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        if response.status_code == 200:
+            access_token = response.data.get('access')
+            email_or_username = request.data.get('email') or request.data.get('username')
+            # Clear tokens from response body
+            response.data = {
+                'message': 'Connexion réussie',
+                'user': UserSerializer(User.objects.get(email=email_or_username)).data
+            }
+            # Set HttpOnly cookie
+            response.set_cookie(
+                key=settings.SIMPLE_JWT['AUTH_COOKIE'],
+                value=access_token,
+                expires=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'],
+                secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
+                httponly=settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
+                samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
+            )
+        return response
+
+
+class LogoutView(views.APIView):
+    """Clear the auth cookie"""
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        response = Response({"message": "Déconnexion réussie"}, status=status.HTTP_200_OK)
+        response.delete_cookie(settings.SIMPLE_JWT['AUTH_COOKIE'])
+        return response
 
 
 @api_view(['GET'])
