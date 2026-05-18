@@ -20,6 +20,10 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
+if 'VERCEL_URL' in os.environ:
+    ALLOWED_HOSTS.append(os.environ['VERCEL_URL'])
+    ALLOWED_HOSTS.append('.vercel.app')
+
 # Security Settings
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
@@ -151,7 +155,7 @@ SIMPLE_JWT = {
     'AUTH_COOKIE_SECURE': not DEBUG,
     'AUTH_COOKIE_HTTP_ONLY': True,
     'AUTH_COOKIE_PATH': '/',
-    'AUTH_COOKIE_SAMESITE': 'Lax' if DEBUG else 'Strict',
+    'AUTH_COOKIE_SAMESITE': 'Lax',
 }
 
 # CORS Settings
@@ -159,6 +163,9 @@ CORS_ALLOWED_ORIGINS = os.getenv(
     'CORS_ALLOWED_ORIGINS',
     'http://localhost:3000,http://127.0.0.1:3000'
 ).split(',')
+
+if 'VERCEL_URL' in os.environ:
+    CORS_ALLOWED_ORIGINS.append(f"https://{os.environ['VERCEL_URL']}")
 
 CORS_ALLOW_CREDENTIALS = True
 
