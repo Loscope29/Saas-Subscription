@@ -14,10 +14,12 @@ const mockData = [
 ];
 
 const ExpenseChart = ({ currentMonthlyCost }) => {
-  // Use mock data but adjust the last month to the current real data if available
   const data = [...mockData];
   if (currentMonthlyCost) {
-    data[data.length - 1].cost = parseFloat(currentMonthlyCost);
+    data[data.length - 1] = {
+      ...data[data.length - 1],
+      cost: parseFloat(currentMonthlyCost)
+    };
   }
 
   return (
