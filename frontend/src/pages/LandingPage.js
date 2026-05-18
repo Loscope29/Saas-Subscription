@@ -241,7 +241,7 @@ const LandingPage = () => {
                 <h4 className="font-semibold text-sm uppercase tracking-wider mb-4">{col.title}</h4>
                 <ul className="space-y-2">
                   {col.links.map((l, j) => (
-                    <li key={j}><a href="#" className="text-sm text-slate-400 hover:text-white transition-colors">{l}</a></li>
+                    <li key={j}><a href="/" className="text-sm text-slate-400 hover:text-white transition-colors">{l}</a></li>
                   ))}
                 </ul>
               </div>

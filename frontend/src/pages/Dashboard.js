@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { subscriptionsAPI, authAPI } from '../services/api';
-import { Link } from 'react-router-dom';
 import SubscriptionModal from '../components/SubscriptionModal';
 import ScanHistory from '../components/ScanHistory';
 import ExpenseChart from '../components/ExpenseChart';
@@ -366,14 +365,14 @@ const Dashboard = () => {
 };
 
 const NavItem = ({ icon, label, active = false }) => (
-  <a href="#" className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all duration-200 ${active ? 'bg-secondary-container text-on-secondary-container shadow-md shadow-secondary/10' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-high'}`}>
+  <a href="/dashboard" className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all duration-200 ${active ? 'bg-secondary-container text-on-secondary-container shadow-md shadow-secondary/10' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-high'}`}>
     <span className="material-symbols-outlined">{icon}</span>
     <span className="text-sm">{label}</span>
   </a>
 );
 
 const MobileNavItem = ({ icon, label, active = false }) => (
-  <a href="#" className={`flex flex-col items-center justify-center p-2 px-4 transition-transform active:scale-95 ${active ? 'bg-primary-container text-on-primary-container rounded-2xl shadow-sm' : 'text-on-surface-variant'}`}>
+  <a href="/dashboard" className={`flex flex-col items-center justify-center p-2 px-4 transition-transform active:scale-95 ${active ? 'bg-primary-container text-on-primary-container rounded-2xl shadow-sm' : 'text-on-surface-variant'}`}>
     <span className="material-symbols-outlined">{icon}</span>
     <span className="text-[10px] font-bold uppercase mt-1">{label}</span>
   </a>
